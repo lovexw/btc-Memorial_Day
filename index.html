@@ -3,137 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>寻找你的专属生日区块 | 比特币永恒记忆</title>
+    <title>比特币专属生日区块 | 永恒记忆</title>
     <style>
         :root {
-            --primary: #F7931A;
-            --primary-glow: rgba(247, 147, 26, 0.4);
-            --bg-dark: #0a0a0c;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --text-main: #ffffff;
-            --text-secondary: #8a8d93;
-            --success: #00c853;
-            --danger: #ff5252;
+            --primary: #F7931A; /* 比特币橙 */
+            --primary-light: #fef4e8;
+            --bg-color: #f8f9fc;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-secondary: #718096;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 30px rgba(247, 147, 26, 0.15);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-main);
-            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(247, 147, 26, 0.05), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
         }
 
         .container {
             width: 100%;
-            max-width: 500px;
-            margin-top: 5vh;
-            animation: fadeIn 0.8s ease-out;
+            max-width: 600px;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #fff, #a0a0a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .header p { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+        /* 顶部标题区 */
+        .header { text-align: center; margin: 30px 0; }
+        .header h1 { font-size: 28px; font-weight: 800; color: #1a202c; margin-bottom: 12px; }
+        .header p { color: var(--text-secondary); font-size: 15px; }
 
+        /* 核心测算卡片 */
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 30px 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
         }
 
         .input-group { margin-bottom: 25px; }
-        .input-group label { display: block; color: var(--text-secondary); font-size: 13px; margin-bottom: 10px; font-weight: 500; }
+        .input-group label { display: block; color: #4a5568; font-size: 14px; margin-bottom: 10px; font-weight: 600; }
         
         input[type="date"] {
-            width: 100%; padding: 15px; border-radius: 12px;
-            background: rgba(0, 0, 0, 0.3); border: 1px solid var(--card-border);
-            color: white; font-size: 16px; outline: none; transition: border 0.3s;
-            color-scheme: dark; font-family: inherit;
+            width: 100%; padding: 16px; border-radius: 12px;
+            background: #f8fafc; border: 2px solid var(--border-color);
+            color: var(--text-main); font-size: 16px; outline: none; 
+            transition: all 0.3s ease; font-family: inherit;
+            -webkit-appearance: none; /* 优化 iOS 显示 */
         }
-        input[type="date"]:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+        input[type="date"]:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px var(--primary-light); }
 
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; border: none;
-            font-size: 16px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s ease; display: flex; justify-content: center; align-items: center;
+            font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
         }
-        .btn-primary { background: var(--primary); color: #000; box-shadow: 0 4px 15px var(--primary-glow); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--primary-glow); }
+        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(247, 147, 26, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
         .btn-primary:active { transform: translateY(0); }
-        .btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; transform: none; }
+        .btn:disabled { background: #cbd5e0; color: #718096; cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* 结果展示区 */
-        #result-container {
-            margin-top: 25px;
-            display: none; /* 默认隐藏 */
-            animation: slideUp 0.5s ease-out forwards;
-        }
-
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .data-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 12px; border: 1px solid var(--card-border); text-align: center; }
-        .data-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
-        .data-value { font-size: 20px; font-weight: 700; color: var(--primary); }
-        .data-value.small { font-size: 16px; }
-
-        .main-result { background: rgba(247, 147, 26, 0.1); border: 1px solid var(--primary-glow); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-        .main-result .time { font-size: 22px; font-weight: bold; color: #fff; margin: 10px 0; }
-        .main-result .desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-
-        /* 已超时/过期状态 */
-        .past-result { background: rgba(255, 82, 82, 0.1); border: 1px solid rgba(255, 82, 82, 0.3); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-        .past-result h3 { color: var(--danger); font-size: 18px; margin-bottom: 10px; }
-        .past-result p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 15px; }
+        #result-container { display: none; margin-top: 25px; animation: slideUp 0.5s ease-out forwards; border-top: 1px dashed var(--border-color); padding-top: 25px; }
+        .result-box { background: var(--primary-light); border: 1px solid rgba(247, 147, 26, 0.2); padding: 20px; border-radius: 16px; text-align: center; }
+        .result-box .time { font-size: 22px; font-weight: 800; color: var(--primary); margin: 10px 0; }
+        .result-box .desc { font-size: 14px; color: #4a5568; }
         
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 12px; }
-        .btn-outline:hover { background: rgba(247, 147, 26, 0.1); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .stat-item { background: #f8fafc; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); }
+        .stat-label { font-size: 12px; color: var(--text-secondary); }
+        .stat-value { font-size: 18px; font-weight: 700; color: #2d3748; margin-top: 4px; }
 
-        .network-status { margin-top: 20px; text-align: center; font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--success); box-shadow: 0 0 8px var(--success); }
-        .status-dot.loading { background-color: #f1c40f; box-shadow: 0 0 8px #f1c40f; animation: pulse 1.5s infinite; }
+        /* 价值主张卡片区 */
+        .section-title { font-size: 20px; font-weight: 700; margin: 40px 0 20px; color: #1a202c; text-align: center; }
+        .features { display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; }
+        .feature-card {
+            background: var(--card-bg); padding: 20px; border-radius: 16px;
+            box-shadow: var(--shadow); border: 1px solid var(--border-color);
+            display: flex; align-items: flex-start; gap: 15px;
+        }
+        .feature-icon { font-size: 24px; background: var(--primary-light); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; flex-shrink: 0; }
+        .feature-text h3 { font-size: 16px; color: #2d3748; margin-bottom: 6px; }
+        .feature-text p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+        /* FAQ 区域 */
+        .faq { margin-bottom: 50px; }
+        .faq-item { background: var(--card-bg); margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        .faq-question { padding: 18px 20px; font-weight: 600; font-size: 15px; color: #2d3748; background: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .faq-answer { padding: 0 20px 18px; font-size: 14px; color: var(--text-secondary); line-height: 1.6; display: none; }
+        .faq-item.active .faq-answer { display: block; border-top: 1px solid var(--primary-light); padding-top: 15px; }
+        .faq-item.active .faq-question { color: var(--primary); }
+
+        .network-status { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.5; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>寻找专属生日区块</h1>
-        <p>输入你的生日(仅限1994-1999年)<br>测算它在比特币时间链上的精确坐标</p>
+        <h1>寻找你的专属生日区块</h1>
+        <p>将生日化作比特币链上的绝对坐标<br>在百万区块到来前，留住永恒记忆</p>
     </div>
 
     <div class="card">
+        <div class="network-status" id="status-text">⏳ 正在同步比特币网络高度...</div>
+        
         <div class="input-group">
-            <label for="birthday">选择出生日期 (年-月-日)</label>
+            <label for="birthday">请选择您的出生日期 (1994 - 1999)</label>
             <input type="date" id="birthday" min="1994-01-01" max="1999-12-31">
         </div>
 
-        <button class="btn btn-primary" id="calc-btn" onclick="calculateBlock()">开始测算</button>
+        <button class="btn btn-primary" id="calc-btn" onclick="calculateBlock()">测算诞生时刻</button>
 
         <div id="result-container">
             </div>
     </div>
 
-    <div class="network-status">
-        <div class="status-dot loading" id="status-dot"></div>
-        <span id="status-text">正在同步比特币网络...</span>
+    <h2 class="section-title">为什么它如此珍贵？</h2>
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">💎</div>
+            <div class="feature-text">
+                <h3>绝对的唯一性</h3>
+                <p>比特币区块高度与日期 (YYMMDD) 完美重合的概率极低。1994至1999年出生的你，在整个比特币历史中，只会拥有这唯一一个精准匹配的区块。</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⏳</div>
+            <div class="feature-text">
+                <h3>不可篡改的物理刻度</h3>
+                <p>相比于容易倒闭的商业公司或会丢失的硬盘，比特币的时间链由全球成千上万个节点共同维护。只要人类文明还在，这个区块就永远存在。</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💌</div>
+            <div class="feature-text">
+                <h3>永恒的链上寄语</h3>
+                <p>通过 OP_RETURN 技术，你可以将一段话、求婚誓言或对未来的期许，永远写入这个专属区块中，成为真正的“永恒记忆”。</p>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">常见问题 (Q&A)</h2>
+    <div class="faq">
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">为什么只能测算 1994-1999 年的生日？ <span>▼</span></div>
+            <div class="faq-answer">目前的比特币区块高度为 94 万+，是一个 6 位数。为了让区块号完美对应生日，我们采用“两位年份+两位月份+两位日期”(YYMMDD) 的格式。因此，只有 94xxxx 到 99xxxx 的区块能完美匹配标准日期格式，在跨入 100 万区块（7位数）后，这种匹配就不复存在了。</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">预测的时间准确吗？ <span>▼</span></div>
+            <div class="faq-answer">结果为预估时间。比特币网络的设计是平均每 10 分钟诞生一个区块，但这只是一个统计学概率，实际出块时间可能在 1 分钟到 1 小时之间波动。倒计时仅供参考，越接近目标区块，预测越准确。</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">什么是“铭刻”专属区块？ <span>▼</span></div>
+            <div class="faq-answer">比特币协议中包含一个名为 OP_RETURN 的功能，允许用户在交易中附加极少量的文本信息（最高80字节）。这意味着你可以将一段具有纪念意义的文字（如十六进制编码后的寄语）永久写入到属于你的那个特定区块的账本中，任何人无法篡改和删除。</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">如果我的生日区块已经过去了怎么办？ <span>▼</span></div>
+            <div class="faq-answer">如果你输入日期后提示“已载入史册”，说明你的专属区块已经在过去的某一天诞生了。虽然无法再进行实时铭刻，但它依然是属于你的历史坐标，你可以在区块链浏览器上随时去回看那个区块里发生的交易，这同样是一种缘分。</div>
+        </div>
     </div>
 </div>
 
@@ -147,10 +187,28 @@
     let currentBlockHeight = 0;
     const calcBtn = document.getElementById('calc-btn');
     const statusText = document.getElementById('status-text');
-    const statusDot = document.getElementById('status-dot');
     const resultContainer = document.getElementById('result-container');
+    const dateInput = document.getElementById('birthday');
 
-    // 获取当前区块高度
+    // FAQ 交互
+    function toggleFaq(element) {
+        element.classList.toggle('active');
+    }
+
+    // 智能设置默认日期 (解决手机端默认打开2026年的问题)
+    function setDefaultDate(height) {
+        // 取高度的前两位作为年份，例如 940233 -> 94
+        const yearPrefix = Math.floor(height / 10000); 
+        let defaultYear = 1900 + yearPrefix;
+        
+        // 确保年份在合法范围内 1994-1999
+        if (defaultYear < 1994) defaultYear = 1994;
+        if (defaultYear > 1999) defaultYear = 1999;
+
+        // 设置为该年的 6 月 1 日作为居中默认值
+        dateInput.value = `${defaultYear}-06-01`;
+    }
+
     async function fetchCurrentHeight() {
         for (let api of apis) {
             try {
@@ -158,19 +216,21 @@
                 if (response.ok) {
                     const height = await response.text();
                     currentBlockHeight = parseInt(height);
-                    statusText.innerText = `网络已同步 | 当前高度: ${currentBlockHeight.toLocaleString()}`;
-                    statusDot.className = 'status-dot'; // 绿色常亮
+                    statusText.innerHTML = `✅ 网络已同步 | 当前高度: <strong>${currentBlockHeight.toLocaleString()}</strong>`;
+                    statusText.style.color = '#38a169';
+                    
+                    // 根据当前区块动态设定日历默认值
+                    setDefaultDate(currentBlockHeight);
                     return true;
                 }
             } catch (error) {
                 console.warn(`API Failed: ${api}`);
             }
         }
-        statusText.innerText = '网络连接失败，请检查网络后刷新';
-        statusDot.style.backgroundColor = 'var(--danger)';
-        statusDot.style.boxShadow = 'none';
+        statusText.innerText = '❌ 网络连接失败，请刷新重试';
+        statusText.style.color = '#e53e3e';
         calcBtn.disabled = true;
-        calcBtn.innerText = "网络暂不可用";
+        calcBtn.innerText = "网络不可用";
         return false;
     }
 
@@ -181,14 +241,9 @@
     };
 
     function calculateBlock() {
-        const dateInput = document.getElementById('birthday').value;
-        if (!dateInput) {
-            alert('请先选择一个日期哦！');
-            return;
-        }
+        if (!dateInput.value) { alert('请先选择一个出生日期'); return; }
 
-        // 解析并格式化目标高度
-        const dateObj = new Date(dateInput);
+        const dateObj = new Date(dateInput.value);
         const year = dateObj.getFullYear().toString().slice(-2);
         const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
         const day = dateObj.getDate().toString().padStart(2, '0');
@@ -196,71 +251,47 @@
         const targetHeightStr = `${year}${month}${day}`;
         const targetHeight = parseInt(targetHeightStr);
 
-        // 重置动画
         resultContainer.style.display = 'none';
         setTimeout(() => { resultContainer.style.display = 'block'; }, 10);
 
-        // 逻辑分支：区块已经过去
         if (targetHeight <= currentBlockHeight) {
-            renderPastBlock(targetHeight, dateInput);
+            resultContainer.innerHTML = `
+                <div class="result-box" style="background: #fff5f5; border-color: #feb2b2;">
+                    <div class="desc" style="color: #c53030; font-weight:bold;">已载入史册 📜</div>
+                    <div class="time" style="color: #e53e3e;">高度: ${targetHeight}</div>
+                    <div class="desc">该区块已经在比特币的历史长河中诞生</div>
+                    <a href="https://mempool.space/zh/block/${targetHeight}" target="_blank" style="display:inline-block; margin-top:15px; padding:8px 20px; border:1px solid #fc8181; color:#e53e3e; text-decoration:none; border-radius:20px; font-size:14px;">在浏览器中查看该区块</a>
+                </div>
+            `;
             return;
         }
 
-        // 逻辑分支：区块还在未来
-        renderFutureBlock(targetHeight, dateInput);
-    }
-
-    function renderFutureBlock(targetHeight, dateInput) {
         const blocksLeft = targetHeight - currentBlockHeight;
-        
-        // 计算时间差
         const msLeft = blocksLeft * 10 * 60 * 1000;
         const targetDate = new Date(Date.now() + msLeft);
         
         const daysLeft = Math.floor(msLeft / (1000 * 60 * 60 * 24));
-        const hoursLeft = Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-
-        // 格式化目标日期
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const formattedDate = targetDate.toLocaleDateString('zh-CN', options);
 
         resultContainer.innerHTML = `
-            <div class="data-grid">
-                <div class="data-box">
-                    <div class="data-label">专属区块高度</div>
-                    <div class="data-value">${targetHeight}</div>
+            <div class="grid-2">
+                <div class="stat-item">
+                    <div class="stat-label">专属区块高度</div>
+                    <div class="stat-value">${targetHeight}</div>
                 </div>
-                <div class="data-box">
-                    <div class="data-label">剩余区块数</div>
-                    <div class="data-value small">${blocksLeft.toLocaleString()} 个</div>
+                <div class="stat-item">
+                    <div class="stat-label">剩余区块数</div>
+                    <div class="stat-value">${blocksLeft.toLocaleString()}</div>
                 </div>
             </div>
-
-            <div class="main-result">
-                <div class="desc">根据比特币网络平均10分钟的产块速度<br>您的专属区块预计将在以下时间诞生：</div>
-                <div class="time">${formattedDate}</div>
-                <div class="desc" style="color: var(--primary);">距今约 ${daysLeft} 天 ${hoursLeft} 小时</div>
+            <div class="result-box">
+                <div class="desc">预计诞生时间</div>
+                <div class="time">${targetDate.toLocaleDateString('zh-CN', options)}</div>
+                <div class="desc">距今约 <strong>${daysLeft}</strong> 天</div>
+                <button style="width:100%; margin-top:15px; padding:12px; background:transparent; border:1px solid var(--primary); color:var(--primary); border-radius:10px; cursor:pointer; font-weight:600;" onclick="alert('预定通道开发中，即将支持 OP_RETURN 铭刻服务！')">
+                    💎 提前预定该区块铭刻
+                </button>
             </div>
-
-            <button class="btn btn-outline" onclick="alert('即将开放预定功能，可添加客服微信提前排队。')">
-                🔒 提前锁定该区块进行铭刻
-            </button>
-        `;
-    }
-
-    function renderPastBlock(targetHeight, dateInput) {
-        resultContainer.innerHTML = `
-            <div class="past-result">
-                <h3>已载入史册 📜</h3>
-                <p>您对应的区块高度 <strong>${targetHeight}</strong> 已经在比特币的历史长河中诞生了。</p>
-                <p style="font-size: 12px;">它已被全网节点永久确认，无法再被更改或重新铭刻。</p>
-                <a href="https://mempool.space/zh/block/${targetHeight}" target="_blank" class="btn btn-outline" style="text-decoration: none; display: block; margin-top: 15px;">
-                    在区块链浏览器上查看该区块
-                </a>
-            </div>
-            <button class="btn btn-primary" style="margin-top: 15px; background: #333; color: #fff;" onclick="alert('我们将推出【历史区块追溯卡】服务，敬请期待！')">
-                生成历史纪念海报
-            </button>
         `;
     }
 </script>
