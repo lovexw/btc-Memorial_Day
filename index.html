@@ -2,105 +2,142 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>比特币专属生日区块预测 | 永恒记忆</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>寻找你的专属生日区块 | 比特币永恒记忆</title>
     <style>
         :root {
-            --primary-color: #f7931a; /* 比特币橙 */
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
+            --primary: #F7931A;
+            --primary-glow: rgba(247, 147, 26, 0.4);
+            --bg-dark: #0a0a0c;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
-            --text-muted: #a0a0a0;
+            --text-secondary: #8a8d93;
+            --success: #00c853;
+            --danger: #ff5252;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
             color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(247, 147, 26, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02), transparent 25%);
         }
+
         .container {
-            background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            max-width: 480px;
             width: 100%;
-            text-align: center;
+            max-width: 500px;
+            margin-top: 5vh;
+            animation: fadeIn 0.8s ease-out;
         }
-        h1 { margin-top: 0; font-size: 24px; color: var(--primary-color); }
-        p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #fff, #a0a0a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .header p { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; color: var(--text-secondary); font-size: 13px; margin-bottom: 10px; font-weight: 500; }
+        
         input[type="date"] {
-            width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px;
-            background-color: #2a2a2a; color: white; font-size: 16px; box-sizing: border-box;
-            color-scheme: dark;
+            width: 100%; padding: 15px; border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3); border: 1px solid var(--card-border);
+            color: white; font-size: 16px; outline: none; transition: border 0.3s;
+            color-scheme: dark; font-family: inherit;
         }
-        button.btn-primary {
-            width: 100%; padding: 14px; background-color: var(--primary-color);
-            color: #000; border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
-            cursor: pointer; transition: background 0.2s;
+        input[type="date"]:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+
+        .btn {
+            width: 100%; padding: 16px; border-radius: 12px; border: none;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; display: flex; justify-content: center; align-items: center;
         }
-        button.btn-primary:hover { background-color: #e07b00; }
-        button:disabled { background-color: #555; cursor: not-allowed; }
+        .btn-primary { background: var(--primary); color: #000; box-shadow: 0 4px 15px var(--primary-glow); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--primary-glow); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        /* 结果展示区 */
+        #result-container {
+            margin-top: 25px;
+            display: none; /* 默认隐藏 */
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .data-box { background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 12px; border: 1px solid var(--card-border); text-align: center; }
+        .data-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+        .data-value { font-size: 20px; font-weight: 700; color: var(--primary); }
+        .data-value.small { font-size: 16px; }
+
+        .main-result { background: rgba(247, 147, 26, 0.1); border: 1px solid var(--primary-glow); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .main-result .time { font-size: 22px; font-weight: bold; color: #fff; margin: 10px 0; }
+        .main-result .desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* 已超时/过期状态 */
+        .past-result { background: rgba(255, 82, 82, 0.1); border: 1px solid rgba(255, 82, 82, 0.3); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .past-result h3 { color: var(--danger); font-size: 18px; margin-bottom: 10px; }
+        .past-result p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 15px; }
         
-        #result-card {
-            margin-top: 30px; padding: 20px; border: 1px solid #333;
-            border-radius: 12px; background: #222; display: none;
-        }
-        .result-item { margin: 10px 0; font-size: 16px; }
-        .highlight { color: var(--primary-color); font-weight: bold; font-size: 20px; }
-        
-        .action-area { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #444; }
-        .btn-secondary {
-            display: inline-block; padding: 10px 20px; background: transparent;
-            color: var(--primary-color); border: 1px solid var(--primary-color);
-            border-radius: 20px; text-decoration: none; font-size: 14px;
-            transition: all 0.2s; cursor: pointer;
-        }
-        .btn-secondary:hover { background: rgba(247, 147, 26, 0.1); }
-        
-        .status-bar { margin-top: 15px; font-size: 12px; color: var(--text-muted); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 12px; }
+        .btn-outline:hover { background: rgba(247, 147, 26, 0.1); }
+
+        .network-status { margin-top: 20px; text-align: center; font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--success); box-shadow: 0 0 8px var(--success); }
+        .status-dot.loading { background-color: #f1c40f; box-shadow: 0 0 8px #f1c40f; animation: pulse 1.5s infinite; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.5; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>寻找你的专属生日区块</h1>
-    <p class="subtitle">输入你的生日(仅限1994-1999年)，推算它在比特币时间链上的诞生时刻。</p>
-
-    <div class="input-group">
-        <label for="birthday">选择出生日期 (年-月-日)</label>
-        <input type="date" id="birthday" min="1994-01-01" max="1999-12-31">
+    <div class="header">
+        <h1>寻找专属生日区块</h1>
+        <p>输入你的生日(仅限1994-1999年)<br>测算它在比特币时间链上的精确坐标</p>
     </div>
 
-    <button class="btn-primary" id="calc-btn" onclick="calculateBlock()">开始预测时刻</button>
+    <div class="card">
+        <div class="input-group">
+            <label for="birthday">选择出生日期 (年-月-日)</label>
+            <input type="date" id="birthday" min="1994-01-01" max="1999-12-31">
+        </div>
 
-    <div id="result-card">
-        <div class="result-item">目标区块高度: <br><span class="highlight" id="res-height">--</span></div>
-        <div class="result-item" id="time-prediction">
-            预计诞生时间: <br><span class="highlight" id="res-time">--</span>
-        </div>
-        <div class="result-item" style="font-size: 14px; color: #888;">
-            (距当前还有 <span id="res-blocks-left">--</span> 个区块)
-        </div>
-        
-        <div class="action-area">
-            <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">在这个独一无二的区块里，想留下点什么吗？</p>
-            <a href="javascript:alert('客服微信或报名表单即将上线，敬请期待！');" class="btn-secondary">预定区块铭刻服务</a>
-        </div>
+        <button class="btn btn-primary" id="calc-btn" onclick="calculateBlock()">开始测算</button>
+
+        <div id="result-container">
+            </div>
     </div>
 
-    <div class="status-bar" id="status-text">正在初始化网络...</div>
+    <div class="network-status">
+        <div class="status-dot loading" id="status-dot"></div>
+        <span id="status-text">正在同步比特币网络...</span>
+    </div>
 </div>
 
 <script>
-    // 备用 API 列表，保证高可用性
     const apis = [
         'https://mempool.space/api/blocks/tip/height',
         'https://blockstream.info/api/blocks/tip/height',
@@ -108,8 +145,10 @@
     ];
 
     let currentBlockHeight = 0;
-    const statusText = document.getElementById('status-text');
     const calcBtn = document.getElementById('calc-btn');
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
+    const resultContainer = document.getElementById('result-container');
 
     // 获取当前区块高度
     async function fetchCurrentHeight() {
@@ -119,64 +158,110 @@
                 if (response.ok) {
                     const height = await response.text();
                     currentBlockHeight = parseInt(height);
-                    statusText.innerText = `当前比特币网络高度: ${currentBlockHeight}`;
+                    statusText.innerText = `网络已同步 | 当前高度: ${currentBlockHeight.toLocaleString()}`;
+                    statusDot.className = 'status-dot'; // 绿色常亮
                     return true;
                 }
             } catch (error) {
                 console.warn(`API Failed: ${api}`);
-                // 继续尝试下一个 API
             }
         }
-        statusText.innerText = '网络连接失败，请刷新重试';
-        statusText.style.color = 'red';
+        statusText.innerText = '网络连接失败，请检查网络后刷新';
+        statusDot.style.backgroundColor = 'var(--danger)';
+        statusDot.style.boxShadow = 'none';
         calcBtn.disabled = true;
+        calcBtn.innerText = "网络暂不可用";
         return false;
     }
 
-    // 页面加载时拉取高度
     window.onload = async () => {
-        calcBtn.innerText = "获取网络状态中...";
         calcBtn.disabled = true;
         await fetchCurrentHeight();
-        calcBtn.innerText = "开始预测时刻";
         calcBtn.disabled = false;
     };
 
     function calculateBlock() {
         const dateInput = document.getElementById('birthday').value;
         if (!dateInput) {
-            alert('请先选择一个日期');
+            alert('请先选择一个日期哦！');
             return;
         }
 
-        // 解析日期为 YYMMDD 格式
+        // 解析并格式化目标高度
         const dateObj = new Date(dateInput);
         const year = dateObj.getFullYear().toString().slice(-2);
-        let month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-        let day = dateObj.getDate().toString().padStart(2, '0');
+        const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+        const day = dateObj.getDate().toString().padStart(2, '0');
         
         const targetHeightStr = `${year}${month}${day}`;
         const targetHeight = parseInt(targetHeightStr);
 
-        document.getElementById('res-height').innerText = targetHeightStr;
-        document.getElementById('result-card').style.display = 'block';
+        // 重置动画
+        resultContainer.style.display = 'none';
+        setTimeout(() => { resultContainer.style.display = 'block'; }, 10);
 
+        // 逻辑分支：区块已经过去
         if (targetHeight <= currentBlockHeight) {
-            document.getElementById('time-prediction').innerHTML = `<span style="color:#ff4444; font-size: 14px;">该区块已在历史上诞生！你可以去区块浏览器上寻找它。</span>`;
-            document.getElementById('res-blocks-left').innerText = "0";
+            renderPastBlock(targetHeight, dateInput);
             return;
         }
 
-        // 计算剩余区块和预估时间 (按每个区块10分钟计算)
-        const blocksLeft = targetHeight - currentBlockHeight;
-        document.getElementById('res-blocks-left').innerText = blocksLeft.toLocaleString();
+        // 逻辑分支：区块还在未来
+        renderFutureBlock(targetHeight, dateInput);
+    }
 
+    function renderFutureBlock(targetHeight, dateInput) {
+        const blocksLeft = targetHeight - currentBlockHeight;
+        
+        // 计算时间差
         const msLeft = blocksLeft * 10 * 60 * 1000;
         const targetDate = new Date(Date.now() + msLeft);
+        
+        const daysLeft = Math.floor(msLeft / (1000 * 60 * 60 * 24));
+        const hoursLeft = Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
-        // 格式化输出日期
+        // 格式化目标日期
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        document.getElementById('time-prediction').innerHTML = `预计诞生时间: <br><span class="highlight">${targetDate.toLocaleDateString('zh-CN', options)}</span>`;
+        const formattedDate = targetDate.toLocaleDateString('zh-CN', options);
+
+        resultContainer.innerHTML = `
+            <div class="data-grid">
+                <div class="data-box">
+                    <div class="data-label">专属区块高度</div>
+                    <div class="data-value">${targetHeight}</div>
+                </div>
+                <div class="data-box">
+                    <div class="data-label">剩余区块数</div>
+                    <div class="data-value small">${blocksLeft.toLocaleString()} 个</div>
+                </div>
+            </div>
+
+            <div class="main-result">
+                <div class="desc">根据比特币网络平均10分钟的产块速度<br>您的专属区块预计将在以下时间诞生：</div>
+                <div class="time">${formattedDate}</div>
+                <div class="desc" style="color: var(--primary);">距今约 ${daysLeft} 天 ${hoursLeft} 小时</div>
+            </div>
+
+            <button class="btn btn-outline" onclick="alert('即将开放预定功能，可添加客服微信提前排队。')">
+                🔒 提前锁定该区块进行铭刻
+            </button>
+        `;
+    }
+
+    function renderPastBlock(targetHeight, dateInput) {
+        resultContainer.innerHTML = `
+            <div class="past-result">
+                <h3>已载入史册 📜</h3>
+                <p>您对应的区块高度 <strong>${targetHeight}</strong> 已经在比特币的历史长河中诞生了。</p>
+                <p style="font-size: 12px;">它已被全网节点永久确认，无法再被更改或重新铭刻。</p>
+                <a href="https://mempool.space/zh/block/${targetHeight}" target="_blank" class="btn btn-outline" style="text-decoration: none; display: block; margin-top: 15px;">
+                    在区块链浏览器上查看该区块
+                </a>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 15px; background: #333; color: #fff;" onclick="alert('我们将推出【历史区块追溯卡】服务，敬请期待！')">
+                生成历史纪念海报
+            </button>
+        `;
     }
 </script>
 
