@@ -6,7 +6,7 @@
     <title>比特币专属生日区块 | 永恒记忆</title>
     <style>
         :root {
-            --primary: #F7931A; /* 比特币橙 */
+            --primary: #F7931A;
             --primary-light: #fef4e8;
             --bg-color: #f8f9fc;
             --card-bg: #ffffff;
@@ -36,19 +36,17 @@
             animation: fadeIn 0.6s ease-out;
         }
 
-        /* 顶部标题区 */
         .header { text-align: center; margin: 30px 0; }
         .header h1 { font-size: 28px; font-weight: 800; color: #1a202c; margin-bottom: 12px; }
         .header p { color: var(--text-secondary); font-size: 15px; }
 
-        /* 核心测算卡片 */
         .card {
             background: var(--card-bg);
             border-radius: 20px;
             padding: 30px 25px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .input-group { margin-bottom: 25px; }
@@ -83,14 +81,35 @@
         .stat-label { font-size: 12px; color: var(--text-secondary); }
         .stat-value { font-size: 18px; font-weight: 700; color: #2d3748; margin-top: 4px; }
 
-        /* 价值主张卡片区 */
+        /* ======== 新增：定价与服务卡片 ======== */
+        .pricing-section {
+            background: #fff; border: 2px solid var(--primary-light);
+            border-radius: 20px; padding: 25px; margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(247, 147, 26, 0.08);
+            position: relative; overflow: hidden;
+        }
+        .pricing-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--primary);
+        }
+        .pricing-title { font-size: 18px; font-weight: 800; color: #1a202c; margin-bottom: 8px; text-align: center; }
+        .pricing-desc { font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 20px; line-height: 1.5; }
+        
+        .price-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .price-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #f8fafc; padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border-color);
+        }
+        .price-item span { font-size: 14px; color: #4a5568; font-weight: 500; }
+        .price-item strong { font-size: 16px; color: var(--primary); font-weight: 800; }
+        
+        .refund-notice {
+            background: #fff5f5; border: 1px dashed #fc8181; color: #c53030;
+            padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.5; margin-bottom: 20px;
+        }
+
         .section-title { font-size: 20px; font-weight: 700; margin: 40px 0 20px; color: #1a202c; text-align: center; }
         .features { display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; }
-        .feature-card {
-            background: var(--card-bg); padding: 20px; border-radius: 16px;
-            box-shadow: var(--shadow); border: 1px solid var(--border-color);
-            display: flex; align-items: flex-start; gap: 15px;
-        }
+        .feature-card { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 15px; }
         .feature-icon { font-size: 24px; background: var(--primary-light); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 12px; flex-shrink: 0; }
         .feature-text h3 { font-size: 16px; color: #2d3748; margin-bottom: 6px; }
         .feature-text p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
@@ -105,7 +124,7 @@
 
         .network-status { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
 
-        /* ======== 新增：弹窗组件样式 ======== */
+        /* 弹窗组件样式 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
@@ -131,17 +150,12 @@
         
         .qr-image {
             width: 100%; height: auto; border-radius: 12px; margin: 15px 0 10px;
-            /* 关键：确保手机端长按可以呼出保存/识别菜单 */
             -webkit-touch-callout: default; pointer-events: auto;
             border: 1px solid var(--border-color);
         }
         
-        .qr-hint-box {
-            background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px dashed #cbd5e0;
-        }
-        .qr-hint {
-            font-size: 13px; color: #4a5568; margin-bottom: 6px; line-height: 1.5; text-align: left;
-        }
+        .qr-hint-box { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px dashed #cbd5e0; }
+        .qr-hint { font-size: 13px; color: #4a5568; margin-bottom: 6px; line-height: 1.5; text-align: left; }
         .qr-hint:last-child { margin-bottom: 0; }
         .highlight-text { color: var(--primary); font-weight: bold; }
 
@@ -169,6 +183,30 @@
 
         <div id="result-container">
             </div>
+    </div>
+
+    <div class="pricing-section">
+        <h2 class="pricing-title">专属区块铭刻代打服务</h2>
+        <p class="pricing-desc">专属区块转瞬即逝。我们提供全天候节点监控与手续费代付，替您在千军万马中精准锁定目标区块。</p>
+        
+        <div class="price-list">
+            <div class="price-item">
+                <span>☀️ 日间守候 (08:00 - 22:00)</span>
+                <strong>¥199 / 次</strong>
+            </div>
+            <div class="price-item">
+                <span>🌙 夜间熬夜 (22:00 - 08:00)</span>
+                <strong>¥299 / 次</strong>
+            </div>
+        </div>
+        
+        <div class="refund-notice">
+            🛡️ <strong>极小概率失败保障：</strong> 因极端网络拥堵等不可抗力未能精准打包入目标区块，<strong>退还 50% 费用</strong>。
+        </div>
+        
+        <button class="btn" style="width: 100%; padding: 14px; background: transparent; border: 2px solid var(--primary); color: var(--primary); font-weight: bold; border-radius: 12px;" onclick="openModal()">
+            💬 添加客服获取铭刻方案
+        </button>
     </div>
 
     <h2 class="section-title">为什么它如此珍贵？</h2>
@@ -199,16 +237,20 @@
     <h2 class="section-title">常见问题 (Q&A)</h2>
     <div class="faq">
         <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-question">为什么只能测算 1994-1999 年的生日？ <span>▼</span></div>
-            <div class="faq-answer">目前的比特币区块高度为 94 万+，是一个 6 位数。为了让区块号完美对应生日，我们采用“两位年份+两位月份+两位日期”(YYMMDD) 的格式。因此，只有 94xxxx 到 99xxxx 的区块能完美匹配标准日期格式，在跨入 100 万区块（7位数）后，这种匹配就不复存在了。</div>
-        </div>
-        <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-question">预测的时间准确吗？ <span>▼</span></div>
-            <div class="faq-answer">结果为预估时间。比特币网络的设计是平均每 10 分钟诞生一个区块，但这只是一个统计学概率，实际出块时间可能在 1 分钟到 1 小时之间波动。倒计时仅供参考，越接近目标区块，预测越准确。</div>
+            <div class="faq-answer">结果为预估时间。比特币网络的设计是平均每 10 分钟诞生一个区块，但实际出块时间可能在 1 分钟到 1 小时之间波动。倒计时仅供参考，越接近目标区块，预测越准确。</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-question">什么是“铭刻”专属区块？ <span>▼</span></div>
             <div class="faq-answer">比特币协议中包含一个名为 OP_RETURN 的功能，允许用户在交易中附加极少量的文本信息（最高80字节）。这意味着你可以将一段具有纪念意义的文字（如十六进制编码后的寄语）永久写入到属于你的那个特定区块的账本中，任何人无法篡改和删除。</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">为什么铭刻有极小概率会失败？ <span>▼</span></div>
+            <div class="faq-answer">比特币是一个全球去中心化的博弈网络。即使我们配置了高昂的矿工费（Gas），也有极小概率遇到突发的网络极度拥堵、连续几小时不出块，或者大户恶意竞争挤掉交易等不可控情况，导致交易错过了你的那个特定数字的区块。</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">为什么失败只退款 50%？ <span>▼</span></div>
+            <div class="faq-answer">因为在发起铭刻之前，我们已经为您支出了不可逆的成本：包括 24 小时服务器节点的监控成本、人工盯盘值守的时间成本，以及无论成功与否都要支付给矿工的基础网络手续费。这 50% 的退款是我们为您承担的部分损失，感谢理解。</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-question">如果我的生日区块已经过去了怎么办？ <span>▼</span></div>
@@ -221,7 +263,7 @@
     <div class="modal-content" onclick="event.stopPropagation()">
         <button class="close-btn" onclick="closeModal()">×</button>
         <h3 style="font-size: 18px; color: #1a202c;">添加专属客服</h3>
-        <p style="font-size: 13px; color: #718096; margin-top: 5px;">获取区块铭刻方案及报价</p>
+        <p style="font-size: 13px; color: #718096; margin-top: 5px;">获取区块铭刻方案及预定位置</p>
         
         <img src="https://tc.xiaowuleyi.com/file/1772602473777_image.png" alt="联系微信" class="qr-image">
         
@@ -246,10 +288,8 @@
     const dateInput = document.getElementById('birthday');
     const qrModal = document.getElementById('qr-modal');
 
-    // 弹窗控制逻辑
     function openModal() {
         qrModal.style.display = 'flex';
-        // 延时添加类名以触发 CSS 动画
         setTimeout(() => { qrModal.classList.add('active'); }, 10);
     }
 
@@ -258,12 +298,10 @@
         setTimeout(() => { qrModal.style.display = 'none'; }, 300);
     }
 
-    // FAQ 交互
     function toggleFaq(element) {
         element.classList.toggle('active');
     }
 
-    // 智能设置默认日期
     function setDefaultDate(height) {
         const yearPrefix = Math.floor(height / 10000); 
         let defaultYear = 1900 + yearPrefix;
@@ -334,7 +372,6 @@
         const daysLeft = Math.floor(msLeft / (1000 * 60 * 60 * 24));
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
 
-        // 将之前 alert 的地方改为了 onclick="openModal()"
         resultContainer.innerHTML = `
             <div class="grid-2">
                 <div class="stat-item">
@@ -350,8 +387,8 @@
                 <div class="desc">预计诞生时间</div>
                 <div class="time">${targetDate.toLocaleDateString('zh-CN', options)}</div>
                 <div class="desc">距今约 <strong>${daysLeft}</strong> 天</div>
-                <button style="width:100%; margin-top:15px; padding:12px; background:transparent; border:1px solid var(--primary); color:var(--primary); border-radius:10px; cursor:pointer; font-weight:600;" onclick="openModal()">
-                    💎 提前锁定区块并联系铭刻
+                <button style="width:100%; margin-top:15px; padding:12px; background:var(--primary); border:none; color:#fff; border-radius:10px; cursor:pointer; font-weight:600; box-shadow: 0 4px 12px rgba(247, 147, 26, 0.3);" onclick="openModal()">
+                    💎 立即锁定该区块位置
                 </button>
             </div>
         `;
