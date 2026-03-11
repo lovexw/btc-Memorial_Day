@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>比特币专属生日区块预测 | 永恒记忆</title>
+    <style>
+        :root {
+            --primary-color: #f7931a; /* 比特币橙 */
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { margin-top: 0; font-size: 24px; color: var(--primary-color); }
+        p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); }
+        input[type="date"] {
+            width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px;
+            background-color: #2a2a2a; color: white; font-size: 16px; box-sizing: border-box;
+            color-scheme: dark;
+        }
+        button.btn-primary {
+            width: 100%; padding: 14px; background-color: var(--primary-color);
+            color: #000; border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: background 0.2s;
+        }
+        button.btn-primary:hover { background-color: #e07b00; }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+        
+        #result-card {
+            margin-top: 30px; padding: 20px; border: 1px solid #333;
+            border-radius: 12px; background: #222; display: none;
+        }
+        .result-item { margin: 10px 0; font-size: 16px; }
+        .highlight { color: var(--primary-color); font-weight: bold; font-size: 20px; }
+        
+        .action-area { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #444; }
+        .btn-secondary {
+            display: inline-block; padding: 10px 20px; background: transparent;
+            color: var(--primary-color); border: 1px solid var(--primary-color);
+            border-radius: 20px; text-decoration: none; font-size: 14px;
+            transition: all 0.2s; cursor: pointer;
+        }
+        .btn-secondary:hover { background: rgba(247, 147, 26, 0.1); }
+        
+        .status-bar { margin-top: 15px; font-size: 12px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>寻找你的专属生日区块</h1>
+    <p class="subtitle">输入你的生日(仅限1994-1999年)，推算它在比特币时间链上的诞生时刻。</p>
+
+    <div class="input-group">
+        <label for="birthday">选择出生日期 (年-月-日)</label>
+        <input type="date" id="birthday" min="1994-01-01" max="1999-12-31">
+    </div>
+
+    <button class="btn-primary" id="calc-btn" onclick="calculateBlock()">开始预测时刻</button>
+
+    <div id="result-card">
+        <div class="result-item">目标区块高度: <br><span class="highlight" id="res-height">--</span></div>
+        <div class="result-item" id="time-prediction">
+            预计诞生时间: <br><span class="highlight" id="res-time">--</span>
+        </div>
+        <div class="result-item" style="font-size: 14px; color: #888;">
+            (距当前还有 <span id="res-blocks-left">--</span> 个区块)
+        </div>
+        
+        <div class="action-area">
+            <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">在这个独一无二的区块里，想留下点什么吗？</p>
+            <a href="javascript:alert('客服微信或报名表单即将上线，敬请期待！');" class="btn-secondary">预定区块铭刻服务</a>
+        </div>
+    </div>
+
+    <div class="status-bar" id="status-text">正在初始化网络...</div>
+</div>
+
+<script>
+    // 备用 API 列表，保证高可用性
+    const apis = [
+        'https://mempool.space/api/blocks/tip/height',
+        'https://blockstream.info/api/blocks/tip/height',
+        'https://blockchain.info/q/getblockcount'
+    ];
+
+    let currentBlockHeight = 0;
+    const statusText = document.getElementById('status-text');
+    const calcBtn = document.getElementById('calc-btn');
+
+    // 获取当前区块高度
+    async function fetchCurrentHeight() {
+        for (let api of apis) {
+            try {
+                const response = await fetch(api);
+                if (response.ok) {
+                    const height = await response.text();
+                    currentBlockHeight = parseInt(height);
+                    statusText.innerText = `当前比特币网络高度: ${currentBlockHeight}`;
+                    return true;
+                }
+            } catch (error) {
+                console.warn(`API Failed: ${api}`);
+                // 继续尝试下一个 API
+            }
+        }
+        statusText.innerText = '网络连接失败，请刷新重试';
+        statusText.style.color = 'red';
+        calcBtn.disabled = true;
+        return false;
+    }
+
+    // 页面加载时拉取高度
+    window.onload = async () => {
+        calcBtn.innerText = "获取网络状态中...";
+        calcBtn.disabled = true;
+        await fetchCurrentHeight();
+        calcBtn.innerText = "开始预测时刻";
+        calcBtn.disabled = false;
+    };
+
+    function calculateBlock() {
+        const dateInput = document.getElementById('birthday').value;
+        if (!dateInput) {
+            alert('请先选择一个日期');
+            return;
+        }
+
+        // 解析日期为 YYMMDD 格式
+        const dateObj = new Date(dateInput);
+        const year = dateObj.getFullYear().toString().slice(-2);
+        let month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+        let day = dateObj.getDate().toString().padStart(2, '0');
+        
+        const targetHeightStr = `${year}${month}${day}`;
+        const targetHeight = parseInt(targetHeightStr);
+
+        document.getElementById('res-height').innerText = targetHeightStr;
+        document.getElementById('result-card').style.display = 'block';
+
+        if (targetHeight <= currentBlockHeight) {
+            document.getElementById('time-prediction').innerHTML = `<span style="color:#ff4444; font-size: 14px;">该区块已在历史上诞生！你可以去区块浏览器上寻找它。</span>`;
+            document.getElementById('res-blocks-left').innerText = "0";
+            return;
+        }
+
+        // 计算剩余区块和预估时间 (按每个区块10分钟计算)
+        const blocksLeft = targetHeight - currentBlockHeight;
+        document.getElementById('res-blocks-left').innerText = blocksLeft.toLocaleString();
+
+        const msLeft = blocksLeft * 10 * 60 * 1000;
+        const targetDate = new Date(Date.now() + msLeft);
+
+        // 格式化输出日期
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById('time-prediction').innerHTML = `预计诞生时间: <br><span class="highlight">${targetDate.toLocaleDateString('zh-CN', options)}</span>`;
+    }
+</script>
+
+</body>
+</html>
