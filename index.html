@@ -59,7 +59,7 @@
             background: #f8fafc; border: 2px solid var(--border-color);
             color: var(--text-main); font-size: 16px; outline: none; 
             transition: all 0.3s ease; font-family: inherit;
-            -webkit-appearance: none; /* 优化 iOS 显示 */
+            -webkit-appearance: none;
         }
         input[type="date"]:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px var(--primary-light); }
 
@@ -104,6 +104,46 @@
         .faq-item.active .faq-question { color: var(--primary); }
 
         .network-status { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+
+        /* ======== 新增：弹窗组件样式 ======== */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal-content {
+            background: #fff; padding: 25px 20px; border-radius: 20px;
+            width: 90%; max-width: 360px; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            position: relative; transform: translateY(20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        
+        .close-btn {
+            position: absolute; top: 12px; right: 12px;
+            width: 30px; height: 30px; background: #f1f5f9;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; color: #64748b; font-weight: bold; border: none; font-size: 18px;
+        }
+        
+        .qr-image {
+            width: 100%; height: auto; border-radius: 12px; margin: 15px 0 10px;
+            /* 关键：确保手机端长按可以呼出保存/识别菜单 */
+            -webkit-touch-callout: default; pointer-events: auto;
+            border: 1px solid var(--border-color);
+        }
+        
+        .qr-hint-box {
+            background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px dashed #cbd5e0;
+        }
+        .qr-hint {
+            font-size: 13px; color: #4a5568; margin-bottom: 6px; line-height: 1.5; text-align: left;
+        }
+        .qr-hint:last-child { margin-bottom: 0; }
+        .highlight-text { color: var(--primary); font-weight: bold; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -177,6 +217,21 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="qr-modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="close-btn" onclick="closeModal()">×</button>
+        <h3 style="font-size: 18px; color: #1a202c;">添加专属客服</h3>
+        <p style="font-size: 13px; color: #718096; margin-top: 5px;">获取区块铭刻方案及报价</p>
+        
+        <img src="https://tc.xiaowuleyi.com/file/1772602473777_image.png" alt="联系微信" class="qr-image">
+        
+        <div class="qr-hint-box">
+            <p class="qr-hint">📱 <strong>手机端：</strong>建议<span class="highlight-text">长按上方图片保存</span>至相册，打开微信“扫一扫”选择该图片识别添加。</p>
+            <p class="qr-hint">💻 <strong>电脑端：</strong>请直接使用微信“扫一扫”。</p>
+        </div>
+    </div>
+</div>
+
 <script>
     const apis = [
         'https://mempool.space/api/blocks/tip/height',
@@ -189,23 +244,31 @@
     const statusText = document.getElementById('status-text');
     const resultContainer = document.getElementById('result-container');
     const dateInput = document.getElementById('birthday');
+    const qrModal = document.getElementById('qr-modal');
+
+    // 弹窗控制逻辑
+    function openModal() {
+        qrModal.style.display = 'flex';
+        // 延时添加类名以触发 CSS 动画
+        setTimeout(() => { qrModal.classList.add('active'); }, 10);
+    }
+
+    function closeModal(event) {
+        qrModal.classList.remove('active');
+        setTimeout(() => { qrModal.style.display = 'none'; }, 300);
+    }
 
     // FAQ 交互
     function toggleFaq(element) {
         element.classList.toggle('active');
     }
 
-    // 智能设置默认日期 (解决手机端默认打开2026年的问题)
+    // 智能设置默认日期
     function setDefaultDate(height) {
-        // 取高度的前两位作为年份，例如 940233 -> 94
         const yearPrefix = Math.floor(height / 10000); 
         let defaultYear = 1900 + yearPrefix;
-        
-        // 确保年份在合法范围内 1994-1999
         if (defaultYear < 1994) defaultYear = 1994;
         if (defaultYear > 1999) defaultYear = 1999;
-
-        // 设置为该年的 6 月 1 日作为居中默认值
         dateInput.value = `${defaultYear}-06-01`;
     }
 
@@ -218,8 +281,6 @@
                     currentBlockHeight = parseInt(height);
                     statusText.innerHTML = `✅ 网络已同步 | 当前高度: <strong>${currentBlockHeight.toLocaleString()}</strong>`;
                     statusText.style.color = '#38a169';
-                    
-                    // 根据当前区块动态设定日历默认值
                     setDefaultDate(currentBlockHeight);
                     return true;
                 }
@@ -273,6 +334,7 @@
         const daysLeft = Math.floor(msLeft / (1000 * 60 * 60 * 24));
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
 
+        // 将之前 alert 的地方改为了 onclick="openModal()"
         resultContainer.innerHTML = `
             <div class="grid-2">
                 <div class="stat-item">
@@ -288,8 +350,8 @@
                 <div class="desc">预计诞生时间</div>
                 <div class="time">${targetDate.toLocaleDateString('zh-CN', options)}</div>
                 <div class="desc">距今约 <strong>${daysLeft}</strong> 天</div>
-                <button style="width:100%; margin-top:15px; padding:12px; background:transparent; border:1px solid var(--primary); color:var(--primary); border-radius:10px; cursor:pointer; font-weight:600;" onclick="alert('预定通道开发中，即将支持 OP_RETURN 铭刻服务！')">
-                    💎 提前预定该区块铭刻
+                <button style="width:100%; margin-top:15px; padding:12px; background:transparent; border:1px solid var(--primary); color:var(--primary); border-radius:10px; cursor:pointer; font-weight:600;" onclick="openModal()">
+                    💎 提前锁定区块并联系铭刻
                 </button>
             </div>
         `;
